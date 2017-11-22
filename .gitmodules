@@ -79,3 +79,6 @@
 [submodule "vim/bundle/vim-addon-mw-utils"]
 	path = vim/bundle/vim-addon-mw-utils
 	url = https://github.com/marcweber/vim-addon-mw-utils
+[submodule "vim/bundle/lua-support"]
+	path = vim/bundle/lua-support
+	url = https://github.com/WolfgangMehner/lua-support
