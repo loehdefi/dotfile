@@ -1,6 +1,6 @@
 " compatibility with screen
 if match($TERM, "screen")!=-1
-    set term=xterm
+    set term=xterm-256color
 endif
 set t_Co=256
 set encoding=utf-8
@@ -17,7 +17,8 @@ set number
 set tabstop=4
 set autoindent
 set wildmenu
-"set foldmethod=syntax
+set foldmethod=syntax
+set foldlevelstart=20
 "set foldcolumn=1
 set expandtab
 set shiftwidth=4
@@ -25,73 +26,110 @@ set smartindent
 set hls
 set ignorecase
 set hidden
+set autoread
+set mouse=a
+set updatetime=250
+set showcmd
+set timeoutlen=1000 ttimeoutlen=0
 
 let g:tagbar_ctags_bin = '$HOME/bin/ctags'
-"augroup filetype_lua
-    "autocmd!
-    "autocmd FileType lua setlocal iskeyword+=:
-"augroup END
 
 set previewheight=20
-autocmd VimEnter * NERDTree
 let g:NERDTreeQuitOnOpen = 1
-"autocmd FileType * nested :call tagbar#autoopen(0)
 nnoremap <silent> <F2> :NERDTreeToggle<CR>
 nnoremap <silent> <F3> :TagbarToggle<CR>
+nnoremap <F4> :Gstatus<CR>
+nnoremap <F5> :e<CR>
 
 " Colors
+"let g:solarized_termcolors=256
+let g:solarized_termtrans=1
 colo solarized
-let g:airline_theme='dark'
+"let g:airline_theme='dark'
 set background=dark
-highlight Normal ctermbg=NONE
-highlight nonText ctermbg=NONE
-highlight Folded ctermbg=NONE
-highlight FoldColumn ctermbg=NONE
-highlight LineNr ctermbg=NONE
-highlight SpecialKey ctermbg=NONE
-highlight DiffAdd ctermbg=NONE
-highlight DiffDelete ctermbg=NONE
-highlight DiffChange ctermbg=NONE
-highlight DiffText ctermbg=NONE
-highlight CursorColumn ctermbg=NONE
-highlight CursorLine ctermbg=NONE
-highlight ColorColumn ctermbg=NONE
-
-" Airline show bufferline
-let g:airline#extensions#tabline#enabled = 1
 
 " General settings
-let mapleader = ","
+"let mapleader = "\"
+map <Space> <leader>
 nnoremap . :
 nnoremap : <nop>
 vnoremap . :
 vnoremap : <nop>
 nnoremap - .
-inoremap jk <ESC>
-vnoremap jk <ESC>
-inoremap <ESC> <nop>
+"inoremap jk <ESC>
+"inoremap <ESC> <nop>
 nnoremap <leader>ev :vsplit ~/.vimrc<CR>
 nnoremap <leader>sv :source ~/.vimrc<CR>
 nnoremap * *``
 nnoremap <C-+> <C-]>
-nnoremap <leader>a <C-a> 
-nnoremap <leader>x <C-x> 
-
-" Refreshing and bufferchanges
-nnoremap <F4> :b#<CR>:bd #<CR>
-nnoremap <F5> :e<CR>
-nnoremap <F6> :b#<CR>
-nnoremap <F8> :bnext<CR>
-nnoremap <F7> :bp<CR>
+nnoremap <leader>a <C-a>
+nnoremap <leader>x <C-x>
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+nnoremap <F12> <C-]>
+inoremap jk <ESC>
 
 " Run script on cluster and open log file
 nnoremap <silent> <F9> :! sbatch run_sbv19.sh<CR>
 set wildcharm=<S-Tab>
-nnoremap <F10> :bd *.out<C-a><CR>:split slurm-<S-Tab><S-Tab><S-Tab><CR><C-w>j<C-w>x
-"nnoremap <F12> :! scancel --user=loehdefink<CR>
-nnoremap <F12> :Gstatus<CR>
+"nnoremap <F10> :bd *.out<C-a><CR><ESC>:split slurm-<S-Tab><S-Tab><S-Tab><CR><C-w>j<C-w>x
+nnoremap <F10> :vsplit slurm-<S-Tab><CR>:bd *.out<C-a><CR>:vsplit slurm-<S-Tab><S-Tab><S-Tab><CR><C-w>x<C-w>l
 
-" Comments
-autocmd FileType lua nnoremap <buffer> <leader>c I--<esc>
-autocmd FileType sh nnoremap <buffer> <leader>c I#<esc>
-autocmd FileType vim nnoremap <buffer> <leader>c I"<esc>
+" MiniBufExplorer
+let g:miniBufExplBuffersNeeded = 0
+let g:miniBufExplShowBufNumbers = 0
+let g:miniBufExplCycleArround = 1
+let g:miniBufExplForceSyntaxEnable = 1
+noremap <F8> :MBEbn<CR>
+noremap <F7> :MBEbp<CR>
+
+" EasyMotion
+nmap <space><space> <Plug>(easymotion-overwin-f2)
+let g:EasyMotion_smartcase = 1
+map <Leader>l <Plug>(easymotion-lineforward)
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+map <Leader>h <Plug>(easymotion-linebackward)
+let g:EasyMotion_use_upper = 1
+let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
+
+" FT Lua
+let g:lua_compiler_name = '/home/loehdefink/lua-5.3.4/src/luac'
+let g:lua_interpreter_path = '/home/loehdefink/torch/install/bin/qlua'
+"let g:lua_inspect_internal = 0
+"let g:lua_complete_omni = 1
+let g:lua_internal = 0
+let g:lua_inspect_events = 'BufWritePost'
+augroup filetype_lua
+    autocmd!
+    autocmd FileType lua setlocal iskeyword+=:
+augroup END
+
+" FixWhiteSpaces
+let g:extra_whitespace_ignored_filetypes = ['out']
+au BufNewFile,BufRead *.out set filetype=out
+
+" Grepper
+nnoremap <leader>g :Grepper<CR>
+
+" Gundo
+nnoremap <F6> :GundoToggle<CR>
+
+" ArgWrap
+nnoremap <silent> <leader>a :ArgWrap<CR>
+
+" Tabular
+nnoremap <leader>t :Tabularize /
+vnoremap <leader>t :Tabularize /
+
+" Syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
